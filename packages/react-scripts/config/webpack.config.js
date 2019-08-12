@@ -173,6 +173,9 @@ module.exports = function(webpackEnv) {
       // changing JS code would still trigger a refresh.
     ].filter(Boolean),
     output: {
+      // Hacky fix to support web workers
+      // https://github.com/webpack/webpack/issues/6642#issuecomment-370222543
+      globalObject: 'this',
       // The build folder.
       path: isEnvProduction ? paths.appBuild : undefined,
       // Add /* filename */ comments to generated require()s in the output.
@@ -560,6 +563,11 @@ module.exports = function(webpackEnv) {
             // ** STOP ** Are you adding a new loader?
             // Make sure to add the new loader(s) before the "file" loader.
           ],
+        },
+
+        {
+          test: /\.worker\.js$/,
+          use: { loader: 'worker-loader' },
         },
       ],
     },
